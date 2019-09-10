@@ -138,7 +138,7 @@ $('textarea').focus(function () {
 function colorDefault(dato) {
     $('#' + dato).css({
         border: "none",
-        borderBottom: "1px solid #d63031"
+        borderBottom: "1px solid #33c496"
     });
 }
 
