@@ -1,0 +1,185 @@
+---
+import Icon from '../components/Icon.astro';
+import { getContent, getSocials, type Lang } from '../i18n';
+import { name, avatar as avatarSrc } from '../data/contact';
+import { cvPath as cvHref, withBase } from '../lib/paths';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const { profile, ui } = getContent(lang);
+const socials = getSocials(ui).filter((s) => s.icon !== 'phone');
+const avatar = withBase(avatarSrc);
+---
+<section class="hero" id="top">
+  <div class="container hero__inner">
+    <div class="hero__content">
+      <p class="eyebrow reveal">{profile.title} · {profile.location}</p>
+
+      <h1 class="hero__name reveal">{name}</h1>
+
+      <p class="hero__tagline reveal">{profile.tagline}</p>
+
+      <ul class="hero__focus reveal" aria-label={ui.hero.focusLabel}>
+        {profile.focusAreas.map((area) => <li>{area}</li>)}
+      </ul>
+
+      <div class="hero__cta reveal">
+        <a class="btn btn--primary" href="#contact">
+          {ui.hero.getInTouch} <Icon name="arrow-right" size={18} />
+        </a>
+        <a class="btn btn--ghost" href="#experience">{ui.hero.viewExperience}</a>
+        <a class="btn btn--ghost" href={cvHref} download>
+          <Icon name="download" size={18} /> {ui.hero.downloadCv}
+        </a>
+      </div>
+
+      <div class="hero__socials reveal" aria-label={ui.contact.title}>
+        {socials.map((s) => (
+          <a
+            href={s.href}
+            aria-label={s.label}
+            title={s.label}
+            target={s.external ? '_blank' : undefined}
+            rel={s.external ? 'noopener noreferrer' : undefined}
+          >
+            <Icon name={s.icon} size={20} />
+          </a>
+        ))}
+      </div>
+    </div>
+
+    <div class="hero__media reveal">
+      <div class="hero__avatar">
+        <img
+          src={avatar}
+          alt={ui.hero.portraitAlt}
+          width="320"
+          height="320"
+          loading="eager"
+          fetchpriority="high"
+          decoding="async"
+        />
+      </div>
+    </div>
+  </div>
+
+  <div class="hero__glow" aria-hidden="true"></div>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    overflow: hidden;
+    padding-block: clamp(4.5rem, 12vh, 8rem) clamp(3rem, 8vh, 5rem);
+  }
+  .hero__inner {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    gap: clamp(2rem, 5vw, 3.5rem);
+    align-items: center;
+  }
+  .hero__name {
+    font-size: var(--step-4);
+    margin-block: 0.3rem 1rem;
+  }
+  .hero__tagline {
+    font-size: var(--step-1);
+    color: var(--text-muted);
+    max-width: 46ch;
+    font-weight: 400;
+  }
+  .hero__focus {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-block: 1.75rem;
+  }
+  .hero__focus li {
+    font-family: var(--font-mono);
+    font-size: var(--step--1);
+    color: var(--text);
+    padding: 0.4rem 0.8rem;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: var(--bg-elev);
+  }
+  .hero__cta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 2rem;
+  }
+  .hero__socials {
+    display: flex;
+    gap: 1.1rem;
+    color: var(--text-muted);
+  }
+  .hero__socials a {
+    transition: color var(--transition), transform var(--transition);
+  }
+  .hero__socials a:hover {
+    color: var(--accent);
+    transform: translateY(-2px);
+  }
+
+  .hero__media {
+    display: flex;
+    justify-content: center;
+    order: -1;
+  }
+  .hero__avatar {
+    position: relative;
+    width: clamp(180px, 42vw, 300px);
+    aspect-ratio: 1;
+    border-radius: 50%;
+    padding: 6px;
+    background: linear-gradient(
+      145deg,
+      var(--accent),
+      transparent 55%,
+      var(--border-strong)
+    );
+    box-shadow: var(--shadow);
+  }
+  .hero__avatar::after {
+    content: '';
+    position: absolute;
+    inset: -14px;
+    border-radius: 50%;
+    background: radial-gradient(circle, var(--accent-soft), transparent 70%);
+    z-index: -1;
+  }
+  .hero__avatar img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    background: var(--bg-elev);
+    border: 3px solid var(--bg);
+  }
+  .hero__glow {
+    position: absolute;
+    inset: -20% -10% auto -10%;
+    height: 420px;
+    background: radial-gradient(
+      60% 60% at 30% 20%,
+      var(--accent-soft),
+      transparent 70%
+    );
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  @media (min-width: 860px) {
+    .hero__inner {
+      grid-template-columns: 1.55fr 1fr;
+    }
+    .hero__media {
+      order: 0;
+    }
+  }
+</style>

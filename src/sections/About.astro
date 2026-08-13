@@ -1,0 +1,104 @@
+---
+import { getContent, type Lang } from '../i18n';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const { profile, ui } = getContent(lang);
+---
+<section class="section" id="about">
+  <div class="container about">
+    <div class="about__intro reveal">
+      <p class="eyebrow">{ui.about.eyebrow}</p>
+      <h2 class="section-title">{ui.about.title}</h2>
+      {profile.summary.map((p) => <p class="about__p">{p}</p>)}
+    </div>
+
+    <aside class="about__aside reveal" aria-label={ui.about.asideTitle}>
+      <h3 class="about__aside-title">{ui.about.asideTitle}</h3>
+      <ul class="about__list">
+        {profile.specialties.map((s) => (
+          <li>
+            <span class="about__dot" aria-hidden="true"></span>
+            {s}
+          </li>
+        ))}
+      </ul>
+
+      <div class="about__langs">
+        <span class="about__langs-label">{ui.about.languagesLabel}</span>
+        <p>
+          {profile.languages
+            .map((l) => (l.level ? `${l.name} (${l.level})` : l.name))
+            .join(' · ')}
+        </p>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<style>
+  .about {
+    display: grid;
+    gap: clamp(2rem, 5vw, 4rem);
+    grid-template-columns: 1fr;
+  }
+  .about__p {
+    color: var(--text-muted);
+    margin-top: 1rem;
+    max-width: 65ch;
+  }
+  .about__aside {
+    background: var(--bg-elev);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.75rem;
+    align-self: start;
+    box-shadow: var(--shadow);
+  }
+  .about__aside-title {
+    font-size: var(--step-1);
+    margin-bottom: 1rem;
+  }
+  .about__list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.7rem;
+    padding: 0.5rem 0;
+    color: var(--text);
+    font-size: 0.97rem;
+  }
+  .about__dot {
+    margin-top: 0.55rem;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--accent);
+    flex: none;
+  }
+  .about__langs {
+    margin-top: 1.5rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--border);
+  }
+  .about__langs-label {
+    font-family: var(--font-mono);
+    font-size: var(--step--1);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-faint);
+  }
+  .about__langs p {
+    margin-top: 0.35rem;
+    color: var(--text);
+  }
+
+  @media (min-width: 860px) {
+    .about {
+      grid-template-columns: 1.55fr 1fr;
+      align-items: start;
+    }
+  }
+</style>

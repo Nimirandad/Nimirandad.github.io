@@ -1,0 +1,194 @@
+---
+import { getContent, type Lang } from '../i18n';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const { experience: experiences, ui } = getContent(lang);
+---
+<section class="section section--alt" id="experience">
+  <div class="container">
+    <div class="reveal">
+      <p class="eyebrow">{ui.experience.eyebrow}</p>
+      <h2 class="section-title">{ui.experience.title}</h2>
+      <p class="section-lead">{ui.experience.lead}</p>
+    </div>
+
+    <ol class="timeline">
+      {experiences.map((exp) => (
+        <li class="timeline__item reveal">
+          <div class="timeline__marker" aria-hidden="true">
+            <span class:list={['timeline__dot', { 'is-current': exp.current }]}></span>
+          </div>
+
+          <article class="xp">
+            <header class="xp__head">
+              <div>
+                <h3 class="xp__company">
+                  {exp.company}
+                  {exp.entity && <span class="xp__entity">· {exp.entity}</span>}
+                </h3>
+                <p class="xp__period">{exp.period}</p>
+              </div>
+              {exp.current && <span class="xp__badge">{ui.experience.current}</span>}
+            </header>
+
+            <ul class="xp__roles">
+              {exp.roles.map((role) => (
+                <li>
+                  <span class="xp__role-title">{role.title}</span>
+                  <span class="xp__role-period">{role.period}</span>
+                </li>
+              ))}
+            </ul>
+
+            <ul class="xp__highlights">
+              {exp.highlights.map((h) => <li>{h}</li>)}
+            </ul>
+
+            <ul class="xp__tech" aria-label={ui.experience.technologiesLabel}>
+              {exp.technologies.map((t) => <li>{t}</li>)}
+            </ul>
+          </article>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>
+
+<style>
+  .timeline {
+    margin-top: 2.5rem;
+    position: relative;
+  }
+  .timeline__item {
+    position: relative;
+    padding-left: 2.25rem;
+    padding-bottom: 2.5rem;
+  }
+  .timeline__item:last-child {
+    padding-bottom: 0;
+  }
+  .timeline__marker {
+    position: absolute;
+    left: 0;
+    top: 0.35rem;
+    bottom: -0.35rem;
+    width: 2px;
+    background: var(--border-strong);
+  }
+  .timeline__item:last-child .timeline__marker {
+    bottom: auto;
+    height: 1.5rem;
+  }
+  .timeline__dot {
+    position: absolute;
+    left: -6px;
+    top: 0;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--bg);
+    border: 2px solid var(--border-strong);
+  }
+  .timeline__dot.is-current {
+    background: var(--accent);
+    border-color: var(--accent);
+    box-shadow: 0 0 0 4px var(--accent-soft);
+  }
+
+  .xp {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: clamp(1.25rem, 3vw, 1.75rem);
+  }
+  .xp__head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  .xp__company {
+    font-size: var(--step-1);
+  }
+  .xp__entity {
+    color: var(--text-faint);
+    font-weight: 500;
+    font-size: 0.9rem;
+  }
+  .xp__period {
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    font-size: var(--step--1);
+    margin-top: 0.25rem;
+  }
+  .xp__badge {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--accent);
+    background: var(--accent-soft);
+    border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+    padding: 0.25rem 0.6rem;
+    border-radius: 999px;
+    white-space: nowrap;
+  }
+  .xp__roles {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    margin: 1rem 0 1.25rem;
+    padding: 0.9rem 1rem;
+    background: var(--bg-elev-2);
+    border-radius: var(--radius-sm);
+  }
+  .xp__roles li {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  .xp__role-title {
+    font-weight: 600;
+  }
+  .xp__role-period {
+    color: var(--text-faint);
+    font-family: var(--font-mono);
+    font-size: var(--step--1);
+  }
+  .xp__highlights li {
+    position: relative;
+    padding-left: 1.35rem;
+    margin-bottom: 0.6rem;
+    color: var(--text-muted);
+  }
+  .xp__highlights li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.65rem;
+    width: 6px;
+    height: 6px;
+    border-radius: 2px;
+    background: var(--accent);
+  }
+  .xp__tech {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1.25rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--border);
+  }
+  .xp__tech li {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    padding: 0.28rem 0.6rem;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+  }
+</style>

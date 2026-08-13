@@ -1,0 +1,276 @@
+---
+import ThemeToggle from './ThemeToggle.astro';
+import Icon from './Icon.astro';
+import { name } from '../data/contact';
+import { getContent, routeFor, otherLang, type Lang } from '../i18n';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const { ui } = getContent(lang);
+
+const links = [
+  { href: '#about', label: ui.nav.about },
+  { href: '#experience', label: ui.nav.experience },
+  { href: '#skills', label: ui.nav.skills },
+  { href: '#projects', label: ui.nav.projects },
+  { href: '#contact', label: ui.nav.contact },
+];
+
+const initials = name
+  .split(' ')
+  .map((w) => w[0])
+  .slice(0, 2)
+  .join('');
+
+const other = otherLang(lang);
+const otherRoute = routeFor(other);
+const enRoute = routeFor('en');
+const esRoute = routeFor('es');
+---
+<header
+  class="nav"
+  id="nav"
+  data-lang={lang}
+  data-route-en={enRoute}
+  data-route-es={esRoute}
+>
+  <div class="container nav__inner">
+    <a class="nav__brand" href="#top" aria-label={name}>
+      <span class="nav__mark">{initials}</span>
+      <span class="nav__name">{name}</span>
+    </a>
+
+    <nav class="nav__links" aria-label="Primary">
+      {links.map((l) => <a href={l.href}>{l.label}</a>)}
+    </nav>
+
+    <div class="nav__actions">
+      <a
+        id="lang-switch"
+        class="lang-switch"
+        href={otherRoute}
+        aria-label={ui.actions.langSwitch}
+        title={ui.actions.langSwitch}
+        data-target={other}
+      >
+        {other.toUpperCase()}
+      </a>
+      <ThemeToggle label={ui.actions.themeToggle} />
+      <button
+        id="nav-toggle"
+        class="nav__burger"
+        type="button"
+        aria-label={ui.actions.openMenu}
+        aria-expanded="false"
+        aria-controls="mobile-menu"
+        data-label-open={ui.actions.openMenu}
+        data-label-close={ui.actions.closeMenu}
+      >
+        <Icon name="menu" size={22} />
+      </button>
+    </div>
+  </div>
+
+  <div class="nav__mobile" id="mobile-menu" hidden>
+    <nav aria-label="Mobile">
+      {links.map((l) => <a href={l.href} class="nav__mobile-link">{l.label}</a>)}
+    </nav>
+  </div>
+</header>
+
+<style>
+  .nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: color-mix(in srgb, var(--bg) 82%, transparent);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid transparent;
+    transition: border-color var(--transition), background-color var(--transition);
+  }
+  .nav.is-scrolled {
+    border-bottom-color: var(--border);
+  }
+  .nav__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 4rem;
+    gap: 1rem;
+  }
+  .nav__brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-weight: 700;
+    min-width: 0;
+  }
+  .nav__mark {
+    display: grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 9px;
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    letter-spacing: 0.02em;
+    flex: none;
+  }
+  .nav__name {
+    font-size: 0.98rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .nav__links {
+    display: none;
+    gap: 1.6rem;
+  }
+  .nav__links a {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    font-weight: 500;
+    position: relative;
+    transition: color var(--transition);
+  }
+  .nav__links a::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -6px;
+    width: 100%;
+    height: 2px;
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform var(--transition);
+  }
+  .nav__links a:hover {
+    color: var(--text);
+  }
+  .nav__links a:hover::after {
+    transform: scaleX(1);
+  }
+  .nav__actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .lang-switch {
+    display: inline-grid;
+    place-items: center;
+    min-width: 40px;
+    height: 40px;
+    padding-inline: 0.5rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-strong);
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    transition: color var(--transition), border-color var(--transition);
+  }
+  .lang-switch:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+  }
+  .nav__burger {
+    display: inline-grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-sm);
+    background: transparent;
+    border: 1px solid var(--border-strong);
+    color: var(--text);
+    cursor: pointer;
+  }
+  .nav__mobile {
+    border-top: 1px solid var(--border);
+    background: var(--bg-elev);
+  }
+  .nav__mobile nav {
+    display: flex;
+    flex-direction: column;
+    padding: 0.5rem clamp(1.1rem, 4vw, 2rem) 1rem;
+  }
+  .nav__mobile-link {
+    padding: 0.85rem 0.25rem;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+    font-weight: 500;
+  }
+  .nav__mobile-link:last-child {
+    border-bottom: none;
+  }
+
+  @media (min-width: 860px) {
+    .nav__links {
+      display: flex;
+    }
+    .nav__burger {
+      display: none;
+    }
+  }
+</style>
+
+<script is:inline>
+  (function () {
+    const nav = document.getElementById('nav');
+    if (!nav) return;
+    const current = nav.getAttribute('data-lang');
+
+    try {
+      const pref = localStorage.getItem('lang');
+      if (pref && pref !== current) {
+        const target = nav.getAttribute('data-route-' + pref);
+        if (target) {
+          const here = window.location.pathname.replace(/\/+$/, '');
+          const dest = target.replace(/\/+$/, '');
+          if (here !== dest) {
+            window.location.replace(target + window.location.hash);
+            return;
+          }
+        }
+      }
+    } catch (_) {}
+
+    const langSwitch = document.getElementById('lang-switch');
+    if (langSwitch) {
+      langSwitch.addEventListener('click', function () {
+        try {
+          localStorage.setItem('lang', langSwitch.getAttribute('data-target'));
+        } catch (_) {}
+      });
+    }
+
+    const onScroll = () => nav.classList.toggle('is-scrolled', window.scrollY > 8);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+
+    const toggle = document.getElementById('nav-toggle');
+    const menu = document.getElementById('mobile-menu');
+    if (toggle && menu) {
+      const setOpen = (open) => {
+        menu.hidden = !open;
+        toggle.setAttribute('aria-expanded', String(open));
+        toggle.setAttribute(
+          'aria-label',
+          open
+            ? toggle.getAttribute('data-label-close')
+            : toggle.getAttribute('data-label-open')
+        );
+      };
+      toggle.addEventListener('click', () => setOpen(menu.hidden));
+      menu
+        .querySelectorAll('a')
+        .forEach((a) => a.addEventListener('click', () => setOpen(false)));
+    }
+  })();
+</script>

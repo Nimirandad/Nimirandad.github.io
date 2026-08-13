@@ -1,0 +1,139 @@
+---
+import Icon from '../components/Icon.astro';
+import { getContent, getSocials, type Lang } from '../i18n';
+import { email } from '../data/contact';
+import { cvPath as cvHref } from '../lib/paths';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const { profile, ui } = getContent(lang);
+const socials = getSocials(ui);
+---
+<section class="section section--alt" id="contact">
+  <div class="container contact">
+    <div class="contact__intro reveal">
+      <p class="eyebrow">{ui.contact.eyebrow}</p>
+      <h2 class="section-title">{ui.contact.title}</h2>
+      <p class="contact__lead">{ui.contact.lead}</p>
+      <div class="contact__cta">
+        <a class="btn btn--primary" href={`mailto:${email}`}>
+          <Icon name="email" size={18} /> {ui.contact.emailMe}
+        </a>
+        <a class="btn btn--ghost" href={cvHref} download>
+          <Icon name="download" size={18} /> {ui.contact.downloadCv}
+        </a>
+      </div>
+      <p class="contact__loc">
+        <Icon name="location" size={16} /> {ui.contact.basedIn} {profile.location}
+      </p>
+    </div>
+
+    <ul class="contact__links reveal">
+      {socials.map((s) => (
+        <li>
+          <a
+            href={s.href}
+            target={s.external ? '_blank' : undefined}
+            rel={s.external ? 'noopener noreferrer' : undefined}
+          >
+            <span class="contact__icon"><Icon name={s.icon} size={20} /></span>
+            <span class="contact__text">
+              <span class="contact__label">{s.label}</span>
+              <span class="contact__value">{s.display}</span>
+            </span>
+            {s.external && (
+              <span class="contact__ext" aria-hidden="true">
+                <Icon name="arrow-up-right" size={16} />
+              </span>
+            )}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .contact {
+    display: grid;
+    gap: clamp(2rem, 5vw, 4rem);
+    align-items: start;
+  }
+  .contact__lead {
+    color: var(--text-muted);
+    max-width: 48ch;
+    margin-bottom: 1.75rem;
+  }
+  .contact__cta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+  }
+  .contact__loc {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-faint);
+    font-size: 0.92rem;
+  }
+  .contact__links {
+    display: grid;
+    gap: 0.75rem;
+  }
+  .contact__links a {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.25rem;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    transition: border-color var(--transition), transform var(--transition);
+  }
+  .contact__links a:hover {
+    border-color: var(--accent);
+    transform: translateX(3px);
+  }
+  .contact__icon {
+    display: grid;
+    place-items: center;
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    background: var(--accent-soft);
+    color: var(--accent);
+    flex: none;
+  }
+  .contact__text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.3;
+    min-width: 0;
+  }
+  .contact__label {
+    font-size: 0.78rem;
+    color: var(--text-faint);
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .contact__value {
+    color: var(--text);
+    font-weight: 500;
+    overflow-wrap: anywhere;
+  }
+  .contact__ext {
+    margin-left: auto;
+    color: var(--text-faint);
+  }
+
+  @media (min-width: 820px) {
+    .contact {
+      grid-template-columns: 1.1fr 1fr;
+    }
+  }
+</style>

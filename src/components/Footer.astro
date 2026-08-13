@@ -1,0 +1,86 @@
+---
+import Icon from './Icon.astro';
+import { name } from '../data/contact';
+import { getContent, getSocials, type Lang } from '../i18n';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const { profile, ui } = getContent(lang);
+const socials = getSocials(ui);
+const year = new Date().getFullYear();
+---
+<footer class="footer">
+  <div class="container footer__inner">
+    <p class="footer__name">
+      {name} <span class="footer__sep">·</span> {profile.title}
+    </p>
+
+    <ul class="footer__socials" aria-label={ui.contact.title}>
+      {socials
+        .filter((s) => s.icon !== 'phone')
+        .map((s) => (
+          <li>
+            <a
+              href={s.href}
+              aria-label={s.label}
+              target={s.external ? '_blank' : undefined}
+              rel={s.external ? 'noopener noreferrer' : undefined}
+            >
+              <Icon name={s.icon} size={18} />
+            </a>
+          </li>
+        ))}
+    </ul>
+
+    <p class="footer__meta">
+      © {year} {name}. {ui.footer.builtWith}
+    </p>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    border-top: 1px solid var(--border);
+    padding-block: 2rem;
+  }
+  .footer__inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  .footer__name {
+    font-weight: 600;
+  }
+  .footer__sep {
+    color: var(--text-faint);
+    margin-inline: 0.35rem;
+  }
+  .footer__socials {
+    display: flex;
+    gap: 0.9rem;
+    color: var(--text-muted);
+    order: 3;
+  }
+  .footer__socials a {
+    transition: color var(--transition);
+  }
+  .footer__socials a:hover {
+    color: var(--accent);
+  }
+  .footer__meta {
+    color: var(--text-faint);
+    font-size: 0.85rem;
+    width: 100%;
+    order: 4;
+  }
+  @media (min-width: 640px) {
+    .footer__meta {
+      width: auto;
+    }
+  }
+</style>

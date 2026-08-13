@@ -1,0 +1,221 @@
+---
+import Icon from '../components/Icon.astro';
+import { getContent, type Lang } from '../i18n';
+import { withBase } from '../lib/paths';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const { projects, ui } = getContent(lang);
+
+const resolveImage = (path: string) => withBase(path);
+---
+<section class="section section--alt" id="projects">
+  <div class="container">
+    <div class="reveal">
+      <p class="eyebrow">{ui.projects.eyebrow}</p>
+      <h2 class="section-title">{ui.projects.title}</h2>
+      <p class="section-lead">{ui.projects.lead}</p>
+    </div>
+
+    {projects.length === 0 ? (
+      <div class="projects__empty reveal">
+        <span class="projects__empty-icon" aria-hidden="true">
+          <Icon name="folder" size={30} />
+        </span>
+        <h3 class="projects__empty-title">{ui.projects.emptyTitle}</h3>
+        <p class="projects__empty-text">{ui.projects.emptyText}</p>
+      </div>
+    ) : (
+      <div class="projects__grid">
+        {projects.map((p) => (
+          <article class="project reveal">
+            {p.image && (
+              <img
+                class="project__img"
+                src={resolveImage(p.image)}
+                alt={p.title}
+                loading="lazy"
+                decoding="async"
+              />
+            )}
+            <div class="project__body">
+              <div class="project__head">
+                <h3 class="project__title">{p.title}</h3>
+                <span class="project__year">{p.year}</span>
+              </div>
+              <p class="project__desc">{p.description}</p>
+              {p.highlights && (
+                <ul class="project__highlights">
+                  {p.highlights.map((h) => <li>{h}</li>)}
+                </ul>
+              )}
+              <ul class="project__stack">
+                {p.stack.map((t) => <li>{t}</li>)}
+              </ul>
+              {(p.repo || p.demo || p.isPrivate) && (
+                <div class="project__links">
+                  {p.repo && (
+                    <a href={p.repo} target="_blank" rel="noopener noreferrer">
+                      <Icon name="github" size={16} /> {ui.projects.code}
+                    </a>
+                  )}
+                  {p.demo && (
+                    <a href={p.demo} target="_blank" rel="noopener noreferrer">
+                      <Icon name="arrow-up-right" size={16} /> {ui.projects.demo}
+                    </a>
+                  )}
+                  {!p.repo && p.isPrivate && (
+                    <span class="project__private">
+                      <Icon name="github" size={16} /> {ui.projects.privateLabel}
+                    </span>
+                  )}
+                </div>
+              )}
+            </div>
+          </article>
+        ))}
+      </div>
+    )}
+  </div>
+</section>
+
+<style>
+  .projects__empty {
+    margin-top: 2.5rem;
+    text-align: center;
+    max-width: 46ch;
+    margin-inline: auto;
+    padding: clamp(2rem, 6vw, 3.5rem);
+    border: 1px dashed var(--border-strong);
+    border-radius: var(--radius);
+    background: var(--bg);
+  }
+  .projects__empty-icon {
+    display: inline-grid;
+    place-items: center;
+    width: 60px;
+    height: 60px;
+    border-radius: 14px;
+    background: var(--accent-soft);
+    color: var(--accent);
+    margin-bottom: 1.25rem;
+  }
+  .projects__empty-title {
+    font-size: var(--step-1);
+    margin-bottom: 0.6rem;
+  }
+  .projects__empty-text {
+    color: var(--text-muted);
+  }
+
+  .projects__grid {
+    margin-top: 2.5rem;
+    display: grid;
+    gap: 1.25rem;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  }
+  .project {
+    display: flex;
+    flex-direction: column;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    transition: border-color var(--transition), transform var(--transition);
+  }
+  .project:hover {
+    border-color: var(--border-strong);
+    transform: translateY(-3px);
+  }
+  .project__img {
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    width: 100%;
+  }
+  .project__body {
+    padding: 1.4rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    flex: 1;
+  }
+  .project__head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 0.75rem;
+  }
+  .project__title {
+    font-size: var(--step-1);
+  }
+  .project__year {
+    color: var(--text-faint);
+    font-family: var(--font-mono);
+    font-size: var(--step--1);
+  }
+  .project__desc {
+    color: var(--text-muted);
+  }
+  .project__highlights {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+  }
+  .project__highlights li {
+    padding-left: 1.1rem;
+    position: relative;
+  }
+  .project__highlights li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.55rem;
+    width: 5px;
+    height: 5px;
+    border-radius: 2px;
+    background: var(--accent);
+  }
+  .project__stack {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: auto;
+  }
+  .project__stack li {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    padding: 0.25rem 0.55rem;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+  }
+  .project__links {
+    display: flex;
+    gap: 1rem;
+    padding-top: 0.5rem;
+    align-items: center;
+  }
+  .project__links a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: var(--accent);
+    font-weight: 500;
+    font-size: 0.9rem;
+  }
+  .project__links a:hover {
+    text-decoration: underline;
+  }
+  .project__private {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: var(--text-faint);
+    font-size: 0.85rem;
+  }
+</style>

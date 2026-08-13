@@ -1,0 +1,62 @@
+---
+import { getContent, type Lang } from '../i18n';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const { education, ui } = getContent(lang);
+---
+<section class="section" id="education">
+  <div class="container">
+    <div class="reveal">
+      <p class="eyebrow">{ui.education.eyebrow}</p>
+      <h2 class="section-title">{ui.education.title}</h2>
+    </div>
+
+    <div class="edu">
+      {education.map((e) => (
+        <article class="edu__item reveal">
+          <div>
+            <h3 class="edu__degree">{e.degree}</h3>
+            <p class="edu__inst">{e.institution}</p>
+          </div>
+          <p class="edu__meta">{e.period} · {e.location}</p>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .edu {
+    margin-top: 2rem;
+    display: grid;
+    gap: 1rem;
+  }
+  .edu__item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    padding: 1.4rem 1.6rem;
+    background: var(--bg-elev);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: var(--radius);
+  }
+  .edu__degree {
+    font-size: var(--step-1);
+  }
+  .edu__inst {
+    color: var(--text-muted);
+    margin-top: 0.2rem;
+  }
+  .edu__meta {
+    color: var(--text-faint);
+    font-family: var(--font-mono);
+    font-size: var(--step--1);
+  }
+</style>

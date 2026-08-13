@@ -1,0 +1,66 @@
+---
+import Icon from './Icon.astro';
+
+interface Props {
+  label?: string;
+}
+
+const { label = 'Toggle color theme' } = Astro.props;
+---
+<button
+  id="theme-toggle"
+  class="theme-toggle"
+  type="button"
+  aria-label={label}
+  title={label}
+>
+  <span class="theme-toggle__icon theme-toggle__icon--sun"><Icon name="sun" size={18} /></span>
+  <span class="theme-toggle__icon theme-toggle__icon--moon"><Icon name="moon" size={18} /></span>
+</button>
+
+<style>
+  .theme-toggle {
+    display: inline-grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: transparent;
+    border: 1px solid var(--border-strong);
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: color var(--transition), border-color var(--transition),
+      background-color var(--transition);
+  }
+  .theme-toggle:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+  }
+  .theme-toggle__icon {
+    grid-area: 1 / 1;
+    display: inline-grid;
+    place-items: center;
+  }
+  :global(:root[data-theme='dark']) .theme-toggle__icon--sun,
+  :global(:root[data-theme='light']) .theme-toggle__icon--moon {
+    display: none;
+  }
+</style>
+
+<script is:inline>
+  (function () {
+    const btn = document.getElementById('theme-toggle');
+    if (!btn) return;
+    btn.addEventListener('click', function () {
+      const root = document.documentElement;
+      const next =
+        root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      root.setAttribute('data-theme', next);
+      try {
+        localStorage.setItem('theme', next);
+      } catch (_) {}
+      const meta = document.querySelector('meta[name="theme-color"]');
+      if (meta) meta.setAttribute('content', next === 'dark' ? '#0b0f14' : '#ffffff');
+    });
+  })();
+</script>

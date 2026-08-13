@@ -1,0 +1,71 @@
+---
+import { getContent, type Lang } from '../i18n';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const { skills: skillGroups, ui } = getContent(lang);
+---
+<section class="section" id="skills">
+  <div class="container">
+    <div class="reveal">
+      <p class="eyebrow">{ui.skills.eyebrow}</p>
+      <h2 class="section-title">{ui.skills.title}</h2>
+      <p class="section-lead">{ui.skills.lead}</p>
+    </div>
+
+    <div class="skills">
+      {skillGroups.map((group) => (
+        <article class="skills__card reveal">
+          <h3 class="skills__cat">{group.category}</h3>
+          <ul class="skills__items">
+            {group.items.map((item) => <li>{item}</li>)}
+          </ul>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .skills {
+    margin-top: 2.5rem;
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  }
+  .skills__card {
+    background: var(--bg-elev);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    transition: border-color var(--transition), transform var(--transition);
+  }
+  .skills__card:hover {
+    border-color: var(--border-strong);
+    transform: translateY(-3px);
+  }
+  .skills__cat {
+    font-size: 0.8rem;
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--accent);
+    margin-bottom: 1rem;
+  }
+  .skills__items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .skills__items li {
+    font-size: 0.9rem;
+    color: var(--text);
+    padding: 0.35rem 0.7rem;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 7px;
+  }
+</style>
